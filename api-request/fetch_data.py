@@ -1,6 +1,8 @@
 import requests
 from datetime import date
 
+AVAIABLE_SERIES_URL = "https://api.riksbank.se/swea/v1/Series"
+
 BASE_URL_INTERVAL = (
     "https://api.riksbank.se/swea/v1/Observations"  # /{seriesId}/{from}/{to}'
 )
@@ -22,7 +24,7 @@ def fetch_latest_data_for_series(series_id: str) -> dict[str, any] | None:
 
 
 def fetch_data_for_series_for_range(
-    series_id: str, start_date: str = '2024-01-01', end_date: str = str(date.today())
+    series_id: str, start_date: str = "2024-01-01", end_date: str = str(date.today())
 ) -> dict[str, any] | None:
     api_url = f"{BASE_URL_INTERVAL}/{series_id}/{start_date}/{end_date}"
     try:
@@ -41,3 +43,24 @@ def fetch_data_for_series_for_range(
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         raise
+
+
+def fetch_available_series() -> dict[str, dict[str, str]]:
+    try:
+        response = requests.get(AVAIABLE_SERIES_URL)
+        response.raise_for_status()
+        series_data = response.json()
+        available_series = {}
+        for series in series_data:
+            series_id = series["seriesId"]
+            available_series[series_id] = {
+                "description": series["midDescription"],
+                "observation_max_date": series["observationMaxDate"],
+                "observation_min_date": series["observationMinDate"],
+                "series_closed": series["seriesClosed"],
+            }
+        return available_series
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while fetching available series: {e}")
+        raise
+    
