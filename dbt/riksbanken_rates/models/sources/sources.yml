@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: dev
+    database: db
+    tables: 
+      - name: five_year_rate
+        columns:
+          - name: id
+          - name: date
+          - name: value
+          - name: series_id
+          - name: inserted_at
+      - name: two_year_rate
+        columns:
+          - name: id
+          - name: date
+          - name: value
+          - name: series_id
+          - name: inserted_at
+      - name: reference_rate
+        columns:
+          - name: id
+          - name: date
+          - name: value
+          - name: series_id
+          - name: inserted_at
